@@ -1,0 +1,37 @@
+{
+	"name": "Oopsifier",
+	"description": "Oopsifier is a chrome extension that takes your collection of words and filters the facebook feed and purify the feed.",
+	"manifest_version": 2,
+	"version": "1.0",
+	"background": {
+		"scripts": [
+			"js/vue-csp.min.js",
+			"js/background.js",
+			"js/moment.min.js"
+		]
+	},
+	"content_scripts": [{
+		"matches": [
+			"*://*.facebook.com/*"
+		],
+		"js": [
+			"js/jquery.min.js",
+			"js/content.js"
+		]
+	}],
+	"permissions": [
+		"webRequest",
+		"*://*.facebook.com/*",
+		"tabs",
+		"storage"
+	],
+	"browser_action": {
+		"default_icon": "icon/oopsifier.png",
+		"default_title": "Oopsifier",
+		"default_popup": "oopsifier.html"
+	},
+	"icons": {
+		"16": "icon/oopsifier.png"
+	},
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'"
+}
