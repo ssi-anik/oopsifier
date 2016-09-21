@@ -9,11 +9,11 @@
 	<body id='app'>
 		<div class="container">
 			<div class="row">
-				<div v-if="selectedTab == 'home'">
-					<home :selected-tab.sync="selectedTab"></home>
+				<div v-if="page == 'home'">
+					<home :selected-tab.sync="page"></home>
 				</div>
-				<div v-if="selectedTab == 'log'">
-					<log :selected-tab.sync="selectedTab"></log>
+				<div v-if="page == 'log'">
+					<log :selected-tab.sync="page"></log>
 				</div>
 			</div>
 		</div>
@@ -21,20 +21,20 @@
 
 		<!-- Templates below -->
 		<template id='home'>
-			<div class="col-md-12" style="margin: 10px 0 0;">
+			<div class="col-md-12" style="margin: 10px 0 0;" :filter-text.sync="text">
 				<div class="col-md-12">
-					<!-- <button @click="selectedTab = 'log'" class='btn btn-info btn-sm pull-right'>Log</button> -->
+					<!-- <button @click="page = 'log'" class='btn btn-info btn-sm pull-right'>Log</button> -->
 				</div>
 				<div class="clearfix"></div>
-				<search-bar></search-bar>
-				<filter-list :rows="rows"></filter-list>
+				<search-bar :filter-text.sync="filterText"></search-bar>
+				<filter-list :filter-text.sync="filterText" :rows="rows"></filter-list>
 			</div>
 		</template>
 
 		<template id='log'>
 			<div class="col-md-12">
 				<div class="col-md-12">
-					<button @click="selectedTab = 'home'" class='btn btn-default btn-sm'>Home</button>
+					<button @click="page = 'home'" class='btn btn-default btn-sm'>Home</button>
 				</div>
 				<div class="clearfix"></div>
 			</div>
@@ -58,19 +58,20 @@
 		<template id="filter-list">
 			<div class="col-md-12" v-if="rows.length">
 				<div v-if="!filteredRows.length">
-					<h4 class="text-center text-info">Nothing found with "{{ text }}".</h4>
+					<h4 class="text-center text-info">Nothing found for - "{{ filterText }}".</h4>
 				</div>
 				<div v-else>
-					<h5 class="page-header">Restriction list: </h5>
+					<h5 class="page-header">Filter list: </h5>
 					<div class="col-md-12">
-						<div v-for="row in rows | filterBy text" style="margin: 2px 0;">
+						<!-- row in rows | filterBy filterText -->
+						<div v-for="row in rows | filterBy filterText" style="margin: 2px 0;">
 							<user-collection :row="row"></user-collection>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-12" v-else>
-				<h4 class="text-center text-info">Nothing is saved to match.</h4>
+				<h4 class="text-center text-info">Nothing is saved to filter.</h4>
 			</div>
 		</template>
 
@@ -88,6 +89,7 @@
 							</button>
 						</div>
 					</div>
+					<p class="help-block text-info" v-if="previousText != newFilterText">Press enter or button to update.</p>
 				</div>
 			</form>
 		</template>
