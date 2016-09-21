@@ -1,5 +1,6 @@
 {
 	"name": "Oopsifier",
+	"author": "Syed Sirajul Islam",
 	"description": "Oopsifier is a chrome extension that takes your collection of words and filters the facebook feed and purify the feed.",
 	"manifest_version": 2,
 	"version": "1.0",
@@ -26,12 +27,14 @@
 		"storage"
 	],
 	"browser_action": {
-		"default_icon": "icon/oopsifier.png",
+		"default_icon": "icon/oopsifier-16.png",
 		"default_title": "Oopsifier",
 		"default_popup": "oopsifier.html"
 	},
 	"icons": {
-		"16": "icon/oopsifier.png"
+		"16": "icon/oopsifier-16.png",
+		"32": "icon/oopsifier-32.png",
+		"128": "icon/oopsifier-128.png"
 	},
 	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'"
 }
