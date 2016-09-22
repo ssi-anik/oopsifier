@@ -7,41 +7,44 @@
 		<link href="css/font-awesome.min.css" rel="stylesheet">
 	</head>
 	<body id='app'>
-		<div class="container">
-			<div class="row">
-				<div v-if="page == 'home'">
-					<home :selected-tab.sync="page"></home>
-				</div>
-				<div v-if="page == 'log'">
-					<log :selected-tab.sync="page"></log>
-				</div>
-			</div>
-		</div>
-
+		
+		<application></application>
 
 		<!-- Templates below -->
-		<template id='home'>
-			<div class="col-md-12" style="margin: 10px 0 0;" :filter-text.sync="text">
-				<div class="col-md-12">
-					<!-- <button @click="page = 'log'" class='btn btn-info btn-sm pull-right'>Log</button> -->
+		<template id="application">
+			<div class="container" style="margin: 5px 0 0;">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="btn-group pull-left" role="group">
+							<button @click="tab = 'home'" type="button" class="btn btn-home btn-sm" :disabled="tab == 'home'">Home</button>
+							<button @click="tab = 'logs'" type="button" class="btn btn-logs btn-sm" :disabled="tab == 'logs'">Logs</button>
+						</div>
+						<div class="btn-group pull-right" role="group">
+							<button @click="submitIssueToSource" type="button" class="btn btn-bug btn-sm">Report a bug</button>
+						</div>
+					</div>
 				</div>
-				<div class="clearfix"></div>
-				<search-bar :filter-text.sync="filterText"></search-bar>
-				<filter-list :filter-text.sync="filterText" :rows="rows"></filter-list>
+				<div class="row">
+					<home v-if="tab == 'home'" :rows.sync="rows"></home>
+					<log v-if="tab == 'logs'" :rows.sync="rows"></log>
+				</div>
 			</div>
 		</template>
 
-		<template id='log'>
+		<template id="home">
+			<search-bar :filter-text.sync="filterText"></search-bar>
+			<filter-list :filter-text.sync="filterText" :rows="rows"></filter-list>
+		</template>
+
+		<template id="log">
 			<div class="col-md-12">
-				<div class="col-md-12">
-					<button @click="page = 'home'" class='btn btn-default btn-sm'>Home</button>
-				</div>
-				<div class="clearfix"></div>
+				<report v-for="row in rows" :row="row" v-if="showReport != 0"></report>
+				<h4 class="text-info text-center">Nothing found on filter list.</h4>
 			</div>
 		</template>
 
 		<template id="search-bar">
-			<div class="col-md-12">
+			<div class="col-md-12" style="margin-top: 5px;">
 				<form @submit.prevent="addItemToList">
 					<div class="input-group">
 						<input class="form-control" autocomplete="off" type="text"  id="text" placeholder="Add to list or filter" v-model="filterText">
@@ -61,10 +64,10 @@
 					<h4 class="text-center text-info">Nothing found for - "{{ filterText }}".</h4>
 				</div>
 				<div v-else>
-					<h5 class="page-header">Filter list: </h5>
+					<h5 class="page-header">Filter list ({{ filteredRows.length }}): </h5>
 					<div class="col-md-12">
 						<!-- row in rows | filterBy filterText -->
-						<div v-for="row in rows | filterBy filterText" style="margin: 2px 0;">
+						<div v-for="row in filteredRows" style="margin: 2px 0;">
 							<user-collection :row="row"></user-collection>
 						</div>
 					</div>
@@ -93,6 +96,25 @@
 				</div>
 			</form>
 		</template>
+
+		<template id="report">
+			<table class="table table-bordered" v-if="row.removed.length">
+				<caption>{{ row.key }}</caption>
+				<tr>
+					<th>Links({{ row.removed.length }})</th>
+				</tr>
+				<tr>
+					<td>
+						<ol>
+							<li v-for="link in row.removed">
+								<a href="#" @click.prevent="openUrl(link)">{{link.substring(0, 70)}}</a>
+							</li>
+						</ol>
+					</td>
+				</tr>
+			</table>
+		</template>
+
 		<!-- Templates end here -->
 		<script type="text/javascript" src='js/vue-csp.min.js'></script>
 		<script type="text/javascript" src='js/moment.min.js'></script>

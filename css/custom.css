@@ -16,6 +16,32 @@ body, section {
     color: #0c6767;
     font-size: 10px;
 }
+
+.btn-home, .btn-home:hover {
+    color: #fff;
+    background-color: #34495e;
+    border-color: #2c3e50;
+}
+
+.btn-logs, .btn-logs:hover {
+    color: #fff;
+    background-color: #16a085;
+    border-color: #1abc9c;
+}
+
+.btn-bug, .btn-bug:hover{
+    color: #fff;
+    background-color: #2980b9;
+    border-color: #3498db;
+}
+.btn[disabled]{
+	cursor: not-allowed;
+	pointer-events: none;
+	opacity: .80;
+	filter: alpha(opacity=80);
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
 .fa-external-link-square, .fa-times-circle{ cursor: pointer; }
 
 /* Scroll Bar */

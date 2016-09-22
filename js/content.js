@@ -48,6 +48,7 @@ function removeIfContainsInCollection(){
 		// match the regex for the collection of filter text with the node text
 		var key = nodeText.match(re);
 		if (key !== null) {
+			key = key[0];
 			// get the root of the news
 		    var root = $(this).closest(joiner(news_feed_user_content_container_parent_array));
 		    // get the anchor tag of the news
@@ -72,6 +73,18 @@ function getAbsoluteUrl (relative){
 	return url;
 }
 
-function save (key, url) {
+function saveData (key, url) {
 	// send a broadcast to background
+	broadcastClearedNewsMessage(key, url);
+}
+
+function broadcastClearedNewsMessage(key, url){
+	var message = "update_remove_list";
+	chrome.runtime.sendMessage({
+		message: message, 
+		key: key, 
+		url: url
+	}, function(response) {
+		console.log("Message passed");
+	});
 }

@@ -27,15 +27,30 @@ function saveToLocalStorage(key){
 	return;
 }
 
+var Application = Vue.extend({
+	template: '#application',
+	data () {
+		return {
+			tab: 'home',
+			githubUrl: 'https://github.com/ssi-anik/oopsifier/issues',
+			rows: []
+		};
+	},
+	methods: {
+		submitIssueToSource: function(){
+			chrome.tabs.create({ url: this.githubUrl });
+		}
+	}
+});
+
 var Home = Vue.extend({
 	template: '#home',
 	data () {
 		return {
 			text: '',
-			rows: []
 		};
 	},
-	props: ['selectedTab'],
+	props: ['rows'],
 	methods: {
 		fetchList: function(){
 			// remove all the previous data
@@ -72,7 +87,21 @@ var Log = Vue.extend({
 	data () {
 		return {};
 	},
-	props: ['selectedTab']
+	props: ['rows'],
+	computed: {
+		showReport: function(){
+			/*var number_of_links = this.rows.map(function(row){
+				return row.removed.length;
+			});
+			console.log(number_of_links.reduce((p, c) => p+c));
+			return false;*/
+			return this.rows.map(function(row){
+				return row.removed.length;
+			}).reduce(function(previousValue, currentValue){
+				return previous+current;
+			});
+		}
+	}
 });
 
 var SearchBar = Vue.extend({
@@ -147,6 +176,11 @@ var UserCollection = Vue.extend({
 				alert("FFS, Remove spaces and enter some chars.");
 				return;
 			}
+			// ask user to delete the previous entry
+			if(!confirm("Are you sure you want to update?")){
+				// user didn't permit to update
+				return;
+			}
 			// get the local storage variable
 			var localStorage = getWindowLocalStorage();
 			// get the data with the new text as key
@@ -159,9 +193,9 @@ var UserCollection = Vue.extend({
 				if(!answer){
 					return;
 				}
-				// user permitted to delete the previous entry
-				this.deleteItem(key);
 			}
+			// user permitted to delete the previous entry
+			this.deleteItem(key);
 			// add new entry
 			// set an object with empty array of links
 			// for the key, that is going to be stored
@@ -181,7 +215,7 @@ var UserCollection = Vue.extend({
 			getWindowLocalStorage().removeItem(key);
 			// fetch the list again with new data, as data is now removed
 			var lists = this.$parent.$parent.fetchList();
-			vm.broadcastMessage(lists);
+			//vm.broadcastMessage(lists);
 		},
 		initializePreviousText: function(){
 			// initialize the previous text with the new filter text,
@@ -194,13 +228,28 @@ var UserCollection = Vue.extend({
 		// initialize the previous text value with new filter text
 		this.initializePreviousText();
 	}
+});
+
+var Report = Vue.extend({
+	template: "#report",
+	data () {
+		return {};
+	},
+	props: ['row'],
+	methods: {
+		openUrl: function(url){
+			chrome.tabs.create({ url: url });
+		}
+	}
 })
 
+Vue.component('application', Application);
 Vue.component('home', Home);
 Vue.component('log', Log);
 Vue.component('search-bar', SearchBar);
 Vue.component('filter-list', FilterList);
 Vue.component('user-collection', UserCollection);
+Vue.component('report', Report);
 
 var vm = new Vue({
 	el: '#app',
