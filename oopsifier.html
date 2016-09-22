@@ -27,6 +27,7 @@
 				<div class="row">
 					<home v-if="tab == 'home'" :rows.sync="rows"></home>
 					<log v-if="tab == 'logs'" :rows.sync="rows"></log>
+					{{ $data | json}}
 				</div>
 			</div>
 		</template>
@@ -38,8 +39,8 @@
 
 		<template id="log">
 			<div class="col-md-12">
-				<report v-for="row in rows" :row="row" v-if="showReport != 0"></report>
-				<h4 class="text-info text-center">Nothing found on filter list.</h4>
+				<h4 class="text-info text-center" v-if="showReport == 0">Nothing found on filtered list.</h4>
+				<report v-for="row in rows" :row="row"></report>
 			</div>
 		</template>
 
@@ -98,10 +99,11 @@
 		</template>
 
 		<template id="report">
-			<table class="table table-bordered" v-if="row.removed.length">
-				<caption>{{ row.key }}</caption>
+			<table class="table table-bordered" v-if="row.removed.length" style="margin-top: 3px;">
 				<tr>
-					<th>Links({{ row.removed.length }})</th>
+					<th>
+						"{{ row.key }}" ({{ row.removed.length }} items) - <a title="clear all" href="#" class="text-danger" @click.prevent="removeCorresponding(row.key)" style="font-size: 10px;">Clear all</a>
+					</th>
 				</tr>
 				<tr>
 					<td>

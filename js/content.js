@@ -84,7 +84,5 @@ function broadcastClearedNewsMessage(key, url){
 		message: message, 
 		key: key, 
 		url: url
-	}, function(response) {
-		console.log("Message passed");
-	});
+	}, function(response) {});
 }

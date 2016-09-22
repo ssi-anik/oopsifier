@@ -3,6 +3,13 @@ function getWindowLocalStorage(){
 	return window.localStorage;
 }
 
+// get the initial value state
+function setLocalStorageMapValue(removedValue){
+	removedValue = removedValue || [];
+	return JSON.stringify({
+		removed: removedValue
+	});
+}
 
 // save the new text as key
 function saveToLocalStorage(key){
@@ -21,9 +28,7 @@ function saveToLocalStorage(key){
 	}
 	// set an object with empty array of links
 	// for the key, that is going to be stored
-	localStorage[key] = JSON.stringify({
-		removed: []
-	});
+	localStorage[key] = setLocalStorageMapValue();
 	return;
 }
 
@@ -79,6 +84,12 @@ var Home = Vue.extend({
 	},
 	ready: function(){
 		this.fetchList();
+	},
+	events: {
+		'fetch-list-event': function(message){
+			console.log(message);
+			this.fetchList();
+		}
 	}
 });
 
@@ -90,16 +101,12 @@ var Log = Vue.extend({
 	props: ['rows'],
 	computed: {
 		showReport: function(){
-			/*var number_of_links = this.rows.map(function(row){
-				return row.removed.length;
-			});
-			console.log(number_of_links.reduce((p, c) => p+c));
-			return false;*/
-			return this.rows.map(function(row){
+			var count = this.rows.map(function(row){
 				return row.removed.length;
 			}).reduce(function(previousValue, currentValue){
 				return previous+current;
 			});
+			return count;
 		}
 	}
 });
@@ -199,9 +206,7 @@ var UserCollection = Vue.extend({
 			// add new entry
 			// set an object with empty array of links
 			// for the key, that is going to be stored
-			localStorage[newText] = JSON.stringify({
-				removed: []
-			});
+			localStorage[newText] = setLocalStorageMapValue();
 			// fetch the list again,
 			// as it's updated, 
 			// it's in parent => parent => method
@@ -239,6 +244,16 @@ var Report = Vue.extend({
 	methods: {
 		openUrl: function(url){
 			chrome.tabs.create({ url: url });
+		}
+	},
+	methods: {
+		removeCorresponding: function(key){
+			if(!confirm('Clear all?')){
+				return;
+			}
+			var localStorage = getWindowLocalStorage();
+			localStorage[key] = setLocalStorageMapValue();
+			this.$dispatch('fetch-list-event', 'fetch-new-list-after-removing-link')
 		}
 	}
 })
@@ -278,6 +293,41 @@ var vm = new Vue({
 				    });
 				});
 			});
+		},
+		updateNewList: function(){
+			this.$broadcast('fetch-list-event', 'fetch-list-with-removed-links')
 		}
 	}
 });
+
+// chrome broadcasted message receiver from content.js
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	// check, if the message is for updating the list
+	if(request.message == "update_remove_list"){
+		// get the key from the request
+		var key = request.key;
+		// get the url from the request
+		var url = request.url;
+		insertOrUpdateToLocalStorage(key, url);
+		vm.updateNewList();
+	}
+});
+
+function insertOrUpdateToLocalStorage(key, url){
+	// get the window local storage
+	var localStorage = getWindowLocalStorage();
+	// get the stored value by key
+	var storedValue = localStorage[key];
+	// get the data from the local storage for that  key
+	var data = storedValue ? JSON.parse(storedValue) : false;
+	if(data){
+		// get the removed array
+		var removed = data.removed;
+		// if the url exists in removed array
+		if(removed.indexOf(url) == -1){
+			// push this into the array
+			removed.push(url);
+		}
+		localStorage[key] = setLocalStorageMapValue(removed);
+	}
+}
