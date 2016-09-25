@@ -55,8 +55,9 @@ function removeIfContainsInCollection(){
 		    var anchor = root.find(joiner(news_anchor_array));
 		    // extract the url and get the absolute one
 		    var url = getAbsoluteUrl(anchor.attr('href'));
+		    console.log(url);
 		    // remove the feed entirely.
-		    //root.remove();
+		    root.remove();
 		    // save the matched content with the url
 		    saveData(key, url);
 		}
@@ -89,7 +90,7 @@ function broadcastClearedNewsMessage(key, url){
 
 $(document).on('DOMNodeInserted', function(e) {
 	var news = $(this).find(joiner(news_feed_user_content_container_parent_array));
-	if(news.length > 0) {
+	if(collection.length){
 		removeIfContainsInCollection();
 	}
 });

@@ -105,6 +105,7 @@ var Log = Vue.extend({
 			}).reduce(function(previousValue, currentValue){
 				return previous+current;
 			});
+			console.log(count);
 			return count;
 		}
 	}
@@ -242,7 +243,6 @@ var Report = Vue.extend({
 	props: ['row'],
 	methods: {
 		openUrl: function(url){
-			alert('ok');
 			chrome.tabs.create({ url: url });
 		}
 	},
