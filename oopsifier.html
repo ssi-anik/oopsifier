@@ -27,7 +27,6 @@
 				<div class="row">
 					<home v-if="tab == 'home'" :rows.sync="rows"></home>
 					<log v-if="tab == 'logs'" :rows.sync="rows"></log>
-					{{ $data | json}}
 				</div>
 			</div>
 		</template>

@@ -1,2 +1,2 @@
-1. save the data, key + url -> send broadcast from content to background
-   https://developer.chrome.com/extensions/messaging
+1. Clear all from log doesn't clear the table instantly, 
+2. doesn't remove the  content from the facebook feed

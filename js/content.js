@@ -86,3 +86,10 @@ function broadcastClearedNewsMessage(key, url){
 		url: url
 	}, function(response) {});
 }
+
+$(document).on('DOMNodeInserted', function(e) {
+	var news = $(this).find(joiner(news_feed_user_content_container_parent_array));
+	if(news.length > 0) {
+		removeIfContainsInCollection();
+	}
+});

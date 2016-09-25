@@ -87,7 +87,6 @@ var Home = Vue.extend({
 	},
 	events: {
 		'fetch-list-event': function(message){
-			console.log(message);
 			this.fetchList();
 		}
 	}
@@ -243,6 +242,7 @@ var Report = Vue.extend({
 	props: ['row'],
 	methods: {
 		openUrl: function(url){
+			alert('ok');
 			chrome.tabs.create({ url: url });
 		}
 	},
